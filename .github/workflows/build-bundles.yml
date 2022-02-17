@@ -99,8 +99,12 @@ jobs:
                 
                 if [ using_packs ]
                 then
+                  echo "Rebuilding pack"
+                  rm -r $qlquery_path/.cache
+                  rm -r $qlquery_path/.codeql
                   codeql/codeql pack create $qlquery_path
                 else
+                  echo "Rebuilding cache"
                   # Rebuild cache
                   rm -r $qlquery_path/.cache
                   codeql/codeql query compile --search-path codeql --threads 0 $qlquery_path
