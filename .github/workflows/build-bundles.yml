@@ -100,9 +100,8 @@ jobs:
                 if [ using_packs ]
                 then
                   echo "Rebuilding pack"
-                  rm -r $qlquery_path/.cache
-                  rm -r $qlquery_path/.codeql
-                  codeql/codeql pack create --search-path $qllib_path $qlquery_path
+                  rm $qlquery_path/codeql-pack.lock.yml
+                  codeql/codeql pack create --search-path codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers $qlquery_path
                 else
                   echo "Rebuilding cache"
                   # Rebuild cache
