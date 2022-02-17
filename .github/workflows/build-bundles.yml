@@ -11,7 +11,7 @@ on:
     inputs:
       bundle:
         description: "Which bundle to create. Use '*' to use the bundles.json content"
-        default: "*"
+        default: "codeql-bundle-20220214"
 
 env:
   FORCE_CUSTOMIZATION: "false"
