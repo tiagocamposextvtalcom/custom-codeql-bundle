@@ -37,7 +37,7 @@ jobs:
               jq --compact-output . bundles.json
             )"
           else
-            echo "::set-output name=matrix::[\"$BUNDLE\"]"
+            echo "::set-output name=matrix::{\"bundle\":[\"$BUNDLE\"]}"
           fi
 
   build-bundles:
