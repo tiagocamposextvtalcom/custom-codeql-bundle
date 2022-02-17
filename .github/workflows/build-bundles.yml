@@ -8,6 +8,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      bundle:
+        description: "Which bundle to create. Use '*' to use the bundles.json content"
+        default: "*"
 
 env:
   FORCE_CUSTOMIZATION: "false"
@@ -23,11 +27,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Export CodeQL bundle matrix
+        env: 
+          BUNDLE: ${{ github.event.inputs.bundle }}
         id: export-bundle-matrix
         run: |
-          echo "::set-output name=matrix::$(
-            jq --compact-output . bundles.json
-          )"
+          if [ $BUNDLE == "*" ]
+          then
+            echo "::set-output name=matrix::$(
+              jq --compact-output . bundles.json
+            )"
+          else
+            echo "::set-output name=matrix::[\"$BUNDLE\"]"
+          fi
 
   build-bundles:
     name: "Build custom CodeQL bundles"
@@ -56,10 +67,11 @@ jobs:
             # Copy custom modules
             lang=${lang_path##*/}
 
-            
+            using_packs=1
             if [ -d codeql/qlpacks/codeql-$lang-lib ]; then
               qllib_path=codeql/qlpacks/codeql-$lang-lib
               qlquery_path=codeql/qlpacks/codeql-$lang
+              using_packs=0
             else
               qllib_version=$(ls codeql/qlpacks/codeql/$lang-all)
               qllib_path=codeql/qlpacks/codeql/$lang-all/$qllib_version
@@ -84,10 +96,15 @@ jobs:
                   module_name=${module_file%.*}
                   echo "import customizations.$module_name" >> $qllib_path/Customizations.qll
                 done
-
-                # Rebuild cache
-                rm -r $qlquery_path/.cache
-                codeql/codeql query compile --search-path codeql --threads 0 $qlquery_path
+                
+                if [ using_packs ]
+                then
+                  codeql/codeql pack create $qlquery_path
+                else
+                  # Rebuild cache
+                  rm -r $qlquery_path/.cache
+                  codeql/codeql query compile --search-path codeql --threads 0 $qlquery_path
+                fi
               else
                 echo "::warning::Skipping customization for language $lang, because it doesn't have a Customizations.qll"
               fi
