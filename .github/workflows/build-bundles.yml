@@ -102,7 +102,7 @@ jobs:
                   echo "Rebuilding pack"
                   rm -r $qlquery_path/.cache
                   rm -r $qlquery_path/.codeql
-                  codeql/codeql pack create $qlquery_path
+                  codeql/codeql pack create --search-path $qllib_path $qlquery_path
                 else
                   echo "Rebuilding cache"
                   # Rebuild cache
