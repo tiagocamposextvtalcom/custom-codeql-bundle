@@ -104,8 +104,8 @@ jobs:
                   content_dir=$RUNNER_TEMP/$lang
                   pack_content=$content_dir/codeql/$lang-queries/$qlquery_version
                   codeql/codeql pack create --no-precompile --additional-packs codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers -j 0 --output=$content_dir $qlquery_path
-                  echo "Moving pack content from '$pack_content' to $qlquery_path"
-                  mv -v -f $pack_content $qlquery_path
+                  echo "Moving pack content from '$pack_content' to codeql/qlpacks/codeql/$lang-queries"
+                  mv -v -f $pack_content codeql/qlpacks/codeql/$lang-queries
                 else
                   echo "Rebuilding cache"
                   # Rebuild cache
