@@ -99,10 +99,13 @@ jobs:
                 
                 if [ using_packs ]
                 then
-                  echo "Rebuilding pack"
+                  echo "Rebuilding pack at $qlquery_path"
                   rm $qlquery_path/codeql-pack.lock.yml
-                  codeql/codeql pack create --additional-packs codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers -j 0 --output=$RUNNER_TEMP/$lang $qlquery_path
-                  mv -f $RUNNER_TEMP/$lang/codeql/$lang-queries/$qlquery_version codeql/qlpacks/codeql/$qlquery_version
+                  content_dir=$RUNNER_TEMP/$lang
+                  pack_content=$content_dir/codeql/$lang-queries/$qlquery_version
+                  codeql/codeql pack create --additional-packs codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers -j 0 --output=$content_dir $qlquery_path
+                  echo "Moving pack content from '$pack_content' to $qlquery_path"
+                  mv -f $pack_content $qlquery_path
                 else
                   echo "Rebuilding cache"
                   # Rebuild cache
