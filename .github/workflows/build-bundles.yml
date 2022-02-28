@@ -101,7 +101,8 @@ jobs:
                 then
                   echo "Rebuilding pack"
                   rm $qlquery_path/codeql-pack.lock.yml
-                  codeql/codeql pack create --search-path codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers $qlquery_path
+                  codeql/codeql pack create --additional-packs codeql/qlpacks/codeql/$lang-all:codeql/qlpacks/codeql/suite-helpers -j 0 --output=$RUNNER_TEMP/$lang $qlquery_path
+                  mv -f $RUNNER_TEMP/$lang/codeql/$lang-queries/$qlquery_version codeql/qlpacks/codeql/$qlquery_version
                 else
                   echo "Rebuilding cache"
                   # Rebuild cache
